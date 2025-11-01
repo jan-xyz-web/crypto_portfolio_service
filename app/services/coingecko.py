@@ -1,7 +1,6 @@
 # TODO: Import httpx, time, logging
 # TODO: Setup logger
 
-# TODO: Define fetch_markets(asset_ids: list[str], vs_currency: str = "eur", timeout: int = 10, retries: int = 3) -> list[dict]
 # TODO: Define normalize_market_data(raw: list[dict], ts: int) -> tuple[list[dict], list[dict]]
 
 import httpx
@@ -34,3 +33,12 @@ retries: int = settings.http_retries, backoff: float = settings.http_backoff) ->
                     time.sleep(backoff * (2 ** attempt))
                 else:
                     raise
+
+def normalize_market_data(raw: list[dict], ts: int) ->  tuple[list[dict], list[dict]]:
+    assets_data = []
+    prices_data = []
+    for coin in raw:
+        assets_data.append({"id": coin["id"], "symbol": coin["symbol"], "name": coin["name"]})
+        if coin["current_price"] is not None:
+            prices_data.append({"asset_id": coin["id"], "ts": ts, "price": coin["current_price"], "mcap": coin["market_cap"], "vol": coin["total_volume"]})
+    return (assets_data, prices_data)
