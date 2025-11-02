@@ -1,11 +1,30 @@
-# TODO: Import FastAPI
-# TODO: Import logging
-# TODO: Import config.settings
-# TODO: Import all routers from app.api
+from fastapi import FastAPI
+import logging
 
-# TODO: Setup logging with settings.log_level
+from app.config import settings
+from app.api.assets import router as assets_router
 
-# TODO: Create FastAPI app instance
+logging.basicConfig(
+    level=settings.log_level,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title="Crypto Portfolio API",
+    description="Track crypto prices, portfolio, and alerts",
+    version="1.0.0"
+)
+
+app.include_router(assets_router)
+# Add more routers later (portfolio, alerts, exports)
+
 # TODO: Include all routers (assets, portfolio, alerts, exports)
-# TODO: Add GET / root endpoint returning {"message": "Server is running!"}
-# TODO: Add GET /health endpoint
+
+@app.get("/")
+def root():
+    return {"message": "Crypto Portfolio API is running!", "version": "1.0.0"}
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
